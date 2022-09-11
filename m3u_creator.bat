@@ -3,9 +3,11 @@ if "%~1"=="" echo only drag and drop file or folder&pause&exit
 
 set "_game=%~n1"
 set "_match="
+set "_folder="
 set _flag=0
 
 if exist "%~1\" (
+	set "_folder=%_game%\"
 	cd /d "%~1"&goto :next
 )
 ::search for title and country code only if (Disc #) is at the end
@@ -30,9 +32,12 @@ if %_flag% equ 1 set "_match=%_game%"
 
 type nul>"%temp%\temp.1"
 for %%g in ("%_match%*.cue") do (
-	(echo %%g) >>"%temp%\temp.1"
+	(echo %_folder%%%g) >>"%temp%\temp.1"
 	
 )
+
+if not "%_folder%"=="" cd..
+
 ::copy to the game directory
 copy /y %temp%\temp.1 "%_game%.m3u"
 
