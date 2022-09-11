@@ -5,7 +5,7 @@ just drag and drop a file or folder to the script and it will crteate the m3u fi
 
 if folder is drag and drop, will add all .cue files in that folder
 
-if a file is drag and drop will add all .cue files that matches "gamename.*(Dsic #)" or "gamename(country).*"
+if a file is drag and drop will add all .cue files that matches "gamename.\*(Dsic #)" or "gamename(country).\*"
 
 m3u file will be on the game direcotry
 
