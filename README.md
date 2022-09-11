@@ -7,5 +7,8 @@ if folder is drag and drop, will add all .cue files in that folder
 
 if a file is drag and drop will add all .cue files that matches "gamename.\*(Dsic #)" or "gamename(country).\*"
 
-m3u file will be on the game direcotry
+for individual file, m3u file will be inside the game folder, and m3u list will have direct paths  "game.cue" 
+
+for folder, m3u will be ouside of game folder, and m3u list will have the path for the game folder "gamefolder\game.cue"
+
 
