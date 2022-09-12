@@ -7,30 +7,21 @@ if exist "%~1\" goto :folder
 
 set "_game=%~n1"
 set "_match="
-set _flag=0
 
-::search for title and country code only if (Disc #) is at the end
-if "%_game%"=="%_game:(Disc 1).cue=%" (
-	for /f "tokens=1,2 delims=)(" %%g in ("%_game%") do set "_match=%%g(%%h)"
-)else (
-	set _flag=1
-
-)
 :: folder name, m3u file name
-if not "%_game%"=="%_game:(Disc 1)=%" set "_game=%_game: (Disc 1)=%"&goto :next
-if not "%_game%"=="%_game:(Disc 2)=%" set "_game=%_game: (Disc 2)=%"&goto :next
-if not "%_game%"=="%_game:(Disc 3)=%" set "_game=%_game: (Disc 3)=%"&goto :next
-if not "%_game%"=="%_game:(Disc 4)=%" set "_game=%_game: (Disc 4)=%"&goto :next
-if not "%_game%"=="%_game:(Disc 5)=%" set "_game=%_game: (Disc 5)=%"&goto :next
-if not "%_game%"=="%_game:(Disc 6)=%" set "_game=%_game: (Disc 6)=%"&goto :next
-:next
+if not "%_game%"=="%_game:(Disc 1)=%" set "_file=%_game: (Disc 1)=%"&set "_match=%_game:(Disc 1)=(Disc ?)%"&goto :next
+if not "%_game%"=="%_game:(Disc 2)=%" set "_file=%_game: (Disc 2)=%"&set "_match=%_game:(Disc 2)=(Disc ?)%"&goto :next
+if not "%_game%"=="%_game:(Disc 3)=%" set "_file=%_game: (Disc 3)=%"&set "_match=%_game:(Disc 3)=(Disc ?)%"&goto :next
+if not "%_game%"=="%_game:(Disc 4)=%" set "_file=%_game: (Disc 4)=%"&set "_match=%_game:(Disc 4)=(Disc ?)%"&goto :next
+if not "%_game%"=="%_game:(Disc 5)=%" set "_file=%_game: (Disc 5)=%"&set "_match=%_game:(Disc 5)=(Disc ?)%"&goto :next
+if not "%_game%"=="%_game:(Disc 6)=%" set "_file=%_game: (Disc 6)=%"&set "_match=%_game:(Disc 6)=(Disc ?)%"&goto :next
+
 echo No disc file was found
+:next
 
-if %_flag% equ 1 set "_match=%_game%"
-
-if exist "%_game%.m3u" del "%_game%.m3u"
-for %%g in ("%_match%*.cue") do (
-	(echo %%g) >>"%_game%.m3u"
+if exist "%_file%.m3u" del "%_file%.m3u"
+for %%g in ("%_match%.cue") do (
+	(echo %%g) >>"%_file%.m3u"
 	
 )
 exit
@@ -51,7 +42,7 @@ exit
 :recursive
 
 ::recursive files mode
-if exist "*.cue" echo recursive mode
+if exist "*.cue" goto :recursive_files
 
 for /d %%g in (*) do (
 	if exist "%%g.m3u" del "%%g.m3u"
@@ -61,3 +52,36 @@ for /d %%g in (*) do (
 		
 	)
 ) 
+
+exit
+:: --------------------- recursive file mode -------------------------------
+:recursive_files
+for /f "delims=" %%g in ('dir /b *.cue ^| findstr /r /c:"(Disc 1)"') do (
+	call :check_files "%%g"
+)
+
+exit
+
+:check_files
+
+set "_game=%~n1"
+set "_match="
+
+:: folder name, m3u file name
+if not "%_game%"=="%_game:(Disc 1)=%" set "_file=%_game: (Disc 1)=%"&set "_match=%_game:(Disc 1)=(Disc ?)%"&goto :next2
+if not "%_game%"=="%_game:(Disc 2)=%" set "_file=%_game: (Disc 2)=%"&set "_match=%_game:(Disc 2)=(Disc ?)%"&goto :next2
+if not "%_game%"=="%_game:(Disc 3)=%" set "_file=%_game: (Disc 3)=%"&set "_match=%_game:(Disc 3)=(Disc ?)%"&goto :next2
+if not "%_game%"=="%_game:(Disc 4)=%" set "_file=%_game: (Disc 4)=%"&set "_match=%_game:(Disc 4)=(Disc ?)%"&goto :next2
+if not "%_game%"=="%_game:(Disc 5)=%" set "_file=%_game: (Disc 5)=%"&set "_match=%_game:(Disc 5)=(Disc ?)%"&goto :next2
+if not "%_game%"=="%_game:(Disc 6)=%" set "_file=%_game: (Disc 6)=%"&set "_match=%_game:(Disc 6)=(Disc ?)%"&goto :next2
+
+echo No disc file was found
+:next2
+
+if exist "%_file%.m3u" del "%_file%.m3u"
+for %%g in ("%_match%.cue") do (
+	(echo %%g) >>"%_file%.m3u"
+	
+)
+
+exit /b
