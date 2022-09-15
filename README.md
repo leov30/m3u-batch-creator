@@ -1,5 +1,7 @@
 # m3u-batch-creator
 batch script to create m3u files for retroarch
+will work only for playsation 1? with "(Disc #)" in the file name. this script is based of this tutorial:
+https://docs.retroachievements.org/Multi-Disc-Games-Tutorial/
 
 just drag and drop a file or folder to the script and it will crteate the m3u file. the script depends on the (Disc #) tag in the file name. the script will delete an existing m3u file with the same name if found.
 
