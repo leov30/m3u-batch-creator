@@ -58,12 +58,8 @@ exit
 :: ---------------------- recursive folder mode --------------------------------
 :recursive
 
-::look if folders exist first
-for /d %%g in (*) do set "_found=%%g"
-if not defined _found goto :skip_folders
 
-
-::check extensions for every folder
+::look inside folders first, and check extensions for every folder
 for /d %%g in (*) do (
 	if exist "%%g.m3u" del "%%g.m3u"
 	
@@ -71,8 +67,6 @@ for /d %%g in (*) do (
 
 ) 
 
-
-:skip_folders
 ::look for cue, chd files if exist go to file recursive mode
 set "_ext=cue"
 if exist "*.cue" goto :recursive_files
