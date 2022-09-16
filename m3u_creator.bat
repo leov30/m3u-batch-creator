@@ -1,11 +1,26 @@
 @echo off
+
+:: batch file to create .m3u from (Disc #) in file name, mainly to be used with retroarch
+:: will only look for .cue and .chd files to add into the .m3u
+:: files or folder can be drag and droped to the batch script
+:: or the script can be run in the folder were the .cue/.chd files are located, will also scan in folders too
+:: path inside the m3u file will depend if its a file or folder
+
+
+
 ::recursive mode
 if "%~1"=="" goto :recursive
 
 ::folder mode
 if exist "%~1\" goto :folder
+REM if "%~x1"=="" goto :folder
+
+::single file mode
+set "_ext=cue"
+if "%~x1"==".chd" set "_ext=chd"
 
 set "_game=%~n1"
+
 set "_match="
 
 :: folder name, m3u file name
@@ -20,7 +35,7 @@ echo No disc file was found
 :next
 
 if exist "%_file%.m3u" del "%_file%.m3u"
-for %%g in ("%_match%.cue") do (
+for %%g in ("%_match%.%_ext%") do (
 	(echo %%g) >>"%_file%.m3u"
 	
 )
@@ -29,36 +44,63 @@ exit
 :folder
 
 set "_folder=%~n1"
+set "_ext=cue"
+if exist "%_folder%\*.chd" set "_ext=chd"
 
 if exist "%_folder%.m3u" del "%_folder%.m3u"
-for %%g in ("%_folder%\*.cue") do (
+for %%g in ("%_folder%\*.%_ext%") do (
 	(echo %%g) >>"%_folder%.m3u"
 	
 )
 move /y "%_folder%.m3u" .
 
 exit
-:: ---------------------- recursive mode --------------------------------
+:: ---------------------- recursive folder mode --------------------------------
 :recursive
 
-::recursive files mode
-if exist "*.cue" goto :recursive_files
+::look if folders exist first
+for /d %%g in (*) do set "_found=%%g"
+if not defined _found goto :skip_folders
 
+
+::check extensions for every folder
 for /d %%g in (*) do (
 	if exist "%%g.m3u" del "%%g.m3u"
 	
-	for %%h in ("%%g\*.cue") do (
-		(echo %%h) >>"%%g.m3u"
-		
-	)
+	call :check_ext "%%g"
+
 ) 
 
+
+:skip_folders
+::look for cue, chd files if exist go to file recursive mode
+set "_ext=cue"
+if exist "*.cue" goto :recursive_files
+if exist "*.chd" goto :recursive_files
+
+
 exit
+
+:check_ext
+set "_ext=cue"
+if exist "%~1\*.chd" set "_ext=chd"
+
+for %%h in ("%~1\*.%_ext%") do (
+	(echo %%h) >>"%~1.m3u"
+	
+)
+
+exit /b
+
 :: --------------------- recursive file mode -------------------------------
 :recursive_files
-for /f "delims=" %%g in ('dir /b *.cue ^| findstr /r /c:"(Disc 1)"') do (
+for /f "delims=" %%g in ('dir /b *.%_ext% ^| findstr /r /c:"(Disc 1)"') do (
 	call :check_files "%%g"
 )
+
+::look for cue files first, then look for chd
+if "%_ext%"=="cue" set "_ext=chd"&goto :recursive_files
+
 
 exit
 
@@ -79,7 +121,7 @@ echo No disc file was found
 :next2
 
 if exist "%_file%.m3u" del "%_file%.m3u"
-for %%g in ("%_match%.cue") do (
+for %%g in ("%_match%.%_ext%") do (
 	(echo %%g) >>"%_file%.m3u"
 	
 )
