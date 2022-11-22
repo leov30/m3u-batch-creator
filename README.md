@@ -9,7 +9,7 @@ https://retropie.org.uk/docs/Playstation-1/
 
 # usage
 
-** dragin and droping a folder will add every .cue, or .chd to a single mp3u file, so this is good if games already separeded by folders.
+** draggin and droping a folder will add every .cue, or .chd to a single mp3u file, so this is good if games already separeded by folders.
 ** for games in folders the path inside the m3u will have the same path as the folder
 
 just drag and drop a file or folder to the script and it will create the m3u file. the script depends on the (Disc \#) tag in the file name.
